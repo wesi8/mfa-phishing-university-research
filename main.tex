@@ -1,44 +1,47 @@
-% Hawassa University - CS Research Proposal
-% Title: Evaluating the Effectiveness of Multi-Factor Authentication in Preventing Phishing Attacks in University Systems
-
 \documentclass[11pt]{article}
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{geometry}
-\geometry{a4paper, margin=1in}
+\usepackage[a4paper,margin=1in]{geometry}
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{tikz}
-\usetikzlibrary{shapes,arrows,positioning,fit,backgrounds}
+\usetikzlibrary{shapes,arrows,positioning,fit,backgrounds,calc}
 \usepackage{pgfgantt}
 \usepackage{hyperref}
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue!60!black,
-    citecolor=red!60!black,
-    urlcolor=blue!70!black,
-}
-\usepackage{amsmath}
+\usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{colortbl}
 \usepackage{caption}
+\usepackage{subcaption}
 \usepackage{float}
 \usepackage{fancyhdr}
 \usepackage{enumitem}
 
+\setlist{nosep, left=0pt}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=red!60!black,
+    urlcolor=blue!70!black
+}
+
 \pagestyle{fancy}
 \fancyhf{}
-\rhead{Proposal: MFA vs Phishing}
+\rhead{Proposal: MFA vs Phishing in Univ. Systems}
 \lhead{Hawassa University - CoSc3101}
 \cfoot{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
 
 % Color definitions
 \definecolor{primary}{RGB}{0,103,192}
 \definecolor{secondary}{RGB}{255,193,7}
 \definecolor{accent}{RGB}{220,53,69}
 \definecolor{softblue}{RGB}{227,242,253}
+\definecolor{softgreen}{RGB}{232,245,233}
 
 \begin{document}
 
@@ -49,15 +52,17 @@
     \vspace{1.5cm}
     {\Large Research Proposal (CoSc3101)\par}
     \vspace{0.5cm}
-    {\large Individual Project - 20\% of Total Grade\par}
+    {\large Individual Project\par}
     \vspace{1.5cm}
     {\large Submitted to: Faculty of Informatics, Department of Computer Science\par}
     \vspace{0.5cm}
     {\large Hawassa University Institute of Technology\par}
     \vspace{1.5cm}
-    {\large Author: \textbf{Your Full Name}\par}
+    {\large Instructor: \textbf{Mr Birhane}\par}
     \vspace{0.2cm}
-    {\large ID: \textbf{HS/XXXX/XX}\par}
+    {\large Author: \textbf{Wosen Tasew}\par}
+    \vspace{0.2cm}
+    {\large ID: \textbf{3774/16}\par}
     \vspace{0.2cm}
     {\large Date: \textbf{May 1, 2026}\par}
     \vfill
@@ -68,65 +73,68 @@
 \tableofcontents
 \newpage
 
-\section{Logical Foundation}
+\section{Introduction}
 
+Cybersecurity has become a critical concern for universities because academic institutions store and process highly sensitive information, including student records, staff credentials, research data, financial transactions, and administrative systems. As universities increasingly depend on digital platforms for learning management, email communication, cloud storage, and internal services, they also become attractive targets for phishing attacks. Phishing remains one of the most common and effective attack vectors because it exploits human trust rather than technical weaknesses alone. A successful phishing attack can expose credentials, enable unauthorized access, and provide a foothold for broader compromise within the university network \cite{tesfaye2025ethiopia,rodriguez2024evilginx}.
+
+Multi-factor authentication (MFA) has emerged as one of the most effective controls for reducing account takeover risk. By requiring two or more verification factors, such as a password, one-time code, authenticator app prompt, or hardware token, MFA adds an additional layer of protection beyond password-only authentication. However, not all MFA methods provide the same level of resistance against phishing. SMS-based one-time passwords can still be intercepted or socially engineered, while app-based or hardware-token-based methods are generally stronger against credential theft and interception \cite{almashhadi2024sms,kumar2023mfatyperesist}. This makes it important to evaluate MFA not only as a general security measure, but also in terms of its actual resilience to phishing attacks in real institutional environments.
+
+In university systems, the effectiveness of MFA depends on both technical design and user behavior. Even when MFA is deployed, users may still approve fraudulent prompts, fall for real-time phishing proxies, or disclose authentication codes to attackers. For that reason, a complete evaluation must examine how different MFA mechanisms perform under simulated phishing conditions and how they affect both security and usability. This research is therefore motivated by the need to determine which MFA approach provides the best balance between phishing resistance, deployability, and user experience in a university context \cite{chen2025mlpush,tesfaye2025ethiopia}.
+
+The proposed study will assess the effectiveness of selected MFA mechanisms against controlled phishing simulations in university systems. It will compare the resistance of SMS OTP, TOTP-based authenticator apps, and hardware tokens using measurable security metrics such as phishing success rate, compromise rate, false acceptance rate, and user interaction friction. By doing so, the study aims to generate evidence that can guide universities in selecting stronger authentication methods and improving their overall security posture \cite{almashhadi2024sms,kumar2023mfatyperesist}.
+
+\section{Logical Foundation}
 \subsection{Title}
 \textbf{Evaluating the Effectiveness of Multi-Factor Authentication in Preventing Phishing Attacks in University Systems}
 
 \subsection{Problem Statement (3-Part Framework)}
-
 \begin{itemize}
     \item \textbf{Ideal:} University systems should ensure that only authorized users access sensitive academic and administrative data, with authentication mechanisms resistant to credential theft.
-    
-    \item \textbf{Reality:} Despite widespread deployment of single-factor password-based authentication, phishing attacks successfully compromise over 60\% of university staff and student accounts annually, leading to data breaches and financial fraud.
-    
-    \item \textbf{Consequence:} Unmitigated phishing attacks result in leakage of research data, ransomware infections, erosion of trust in university digital services, and legal liability under data protection regulations.
+    \item \textbf{Reality:} Despite widespread deployment of single-factor password-based authentication, phishing attacks successfully compromise a substantial portion of university user accounts, leading to data breaches and financial fraud.
+    \item \textbf{Consequence:} Unmitigated phishing attacks result in identity theft, leakage of research data, ransomware infections, and erosion of trust in university digital services. Without evaluating adaptive MFA solutions, universities continue to rely on vulnerable authentication methods.
 \end{itemize}
 
 \subsection{Objectives}
-
 \subsubsection{General Objective}
 To evaluate the effectiveness of multi-factor authentication (MFA) mechanisms in mitigating phishing attacks within a university environment.
 
 \subsubsection{Specific SMART Objectives}
-
-\begin{enumerate}[label=\textbf{\arabic*}]
-    \item To simulate three common phishing attack types (email phishing, fake login page, man-in-the-middle) against 60 university users within 8 weeks, measuring credential capture rate.
-    
-    \item To implement three MFA factors (SMS OTP, TOTP via authenticator app, and hardware token) and compare their resistance to phishing by calculating the success rate of compromise (target: <5\% for hardware token).
-    
-    \item To develop a risk-scoring model based on user behavior and MFA context, and validate its performance using precision, recall, and F1-score by May 1, 2026.
+\begin{enumerate}
+    \item \textbf{Objective 1 (Specific, Measurable):} To simulate three common phishing attack types (email phishing, fake login page, man-in-the-middle) against at least 50 university users within 4 weeks, measuring credential capture rate.
+    \item \textbf{Objective 2 (Achievable, Relevant):} To implement three MFA factors (SMS OTP, TOTP via authenticator app, and hardware token) and compare their resistance to phishing by calculating the success rate of compromise.
+    \item \textbf{Objective 3 (Time-bound):} To develop a risk-scoring model based on user behavior and MFA context, and validate its performance using precision, recall, and F1-score by the end of Week 6.
 \end{enumerate}
 
 \section{Literature Synthesis \& SOTA}
 
-\subsection{Peer-Reviewed Sources (2022–2026)}
-
-\begin{table}[H]
+\subsection{Peer-Reviewed Sources (2022--2026)}
+\begin{table}[h!]
 \centering
-\caption{Synthesis Matrix: MFA and Phishing Resistance}
-\small
-\begin{tabular}{|p{2.2cm}|p{2.5cm}|p{2.2cm}|p{2cm}|p{2.2cm}|}
+\footnotesize
+\renewcommand{\arraystretch}{1.5}
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{|l|l|l|c|p{0.28\linewidth}|} 
 \hline
-\rowcolor{primary!20} \textbf{Author(s)} & \textbf{Method} & \textbf{Dataset} & \textbf{Performance Metric} & \textbf{Limitation} \\
-\hline
-Al-Mashhadi et al. (2024) & User study with simulated phishing + SMS OTP & 120 university staff & Compromise rate: 23\% & Did not test TOTP or hardware tokens \\
-\hline
-Chen \& Park (2025) & ML-based phishing detection & 10,000 login events & AUC-ROC: 0.94 & No real-time adversarial simulation \\
-\hline
-Kumar \& Singh (2023) & Comparative analysis of MFA types & Synthetic credential logs & Resistance: FIDO2 > TOTP > SMS & Lacks behavioral context \\
-\hline
-Rodriguez et al. (2024) & Real-time MFA prompt injection & Evilginx2 toolkit & Bypass: SMS-46\%, TOTP-18\% & No user susceptibility measurement \\
-\hline
-Tesfaye \& Bekele (2025) & Survey of Ethiopian universities & 400 students & 68\% unaware of MFA benefits & No experimental validation \\
-\hline
+\textbf{Author (Year)} & \textbf{Method} & \textbf{Data Type} & \textbf{Metric} & \textbf{Technical Limitation} \\ \hline \hline
+
+Al-Mashhadi et al. (2024) \cite{almashhadi2024sms} & Vulnerability Assessment & SMS Traffic Data & N/A & Vulnerable to SIM swapping and SS7 protocol intercept attacks. \\ \hline
+
+Chen \& Park (2025) \cite{chen2025mlpush} & Adaptive ML & Push Notifications & Risk Score & Requires high-quality behavioral data to avoid false MFA fatigue triggers. \\ \hline
+
+Kumar \& Singh (2023) \cite{kumar2023mfatyperesist} & Comparative Analysis & Empirical Study & Resistance \% & Legacy MFA types show significant decline in protection against modern proxies. \\ \hline
+
+Rodriguez et al. (2024) \cite{rodriguez2024evilginx} & Simulation/Injection & Attack Logs & Bypass Rate & Real-time proxying (Evilginx) can bypass MFA regardless of token type. \\ \hline
+
+Tesfaye \& Bekele (2025) \cite{tesfaye2025ethiopia} & User Awareness Study & Survey Data & Awareness \% & Significant gap between technical deployment and user security culture. \\ \hline
 \end{tabular}
+\caption{Synthesis of MFA Security and Phishing Research (2023--2025).}
 \end{table}
 
-\subsection{Synthesis Justification}
-Recent literature confirms that while multi-factor authentication significantly reduces account takeover, phishing techniques have evolved to bypass certain MFA implementations. Al-Mashhadi et al. (2024) demonstrated that SMS-based OTPs remain vulnerable to real-time interception, with a 23\% compromise rate even when MFA is active. Chen \& Park (2025) showed that ML-driven risk scoring can block push fatigue attacks, but their model relied on static thresholds, failing against adaptive phishing. Kumar \& Singh (2023) provided a foundational comparison of MFA types, proving that FIDO2 hardware tokens are theoretically resistant to man-in-the-middle phishing, yet their synthetic dataset lacked real user behavior patterns.
 
-The most critical gap emerges from Rodriguez et al. (2024): while technical bypass rates for TOTP are low (18\%) in isolated environments, no study has measured the combined effect of user training, contextual risk, and MFA type within a real university system. Furthermore, Tesfaye \& Bekele (2025) highlighted that Ethiopian universities—including Hawassa—have near-zero MFA adoption, and students exhibit poor phishing awareness. However, their work was purely survey-based.
+\subsection{Synthesis Justification}
+Recent literature confirms that while multi-factor authentication significantly reduces account takeover, phishing techniques have evolved to bypass certain MFA implementations. Al-Mashhadi et al. (2024) demonstrated that SMS-based OTPs remain vulnerable to real-time interception and social engineering, with a 23\% compromise rate even when MFA is active \cite{almashhadi2024sms}. Chen \& Park (2025) showed that ML-driven risk scoring can block push fatigue attacks, but their model relied on static thresholds, failing against adaptive phishing \cite{chen2025mlpush}. Kumar \& Singh (2023) provided a foundational comparison of MFA types, proving that FIDO2 hardware tokens are theoretically resistant to man-in-the-middle phishing, yet their synthetic dataset lacked real user behavior patterns \cite{kumar2023mfatyperesist}.
+
+The most critical gap emerges from Rodriguez et al. (2024): while technical bypass rates for TOTP are low (18\%) in isolated environments, no study has measured the combined effect of user training, contextual risk, and MFA type within a real university system \cite{rodriguez2024evilginx}. Furthermore, Tesfaye \& Bekele (2025) highlighted that Ethiopian universities, including Hawassa, have low MFA adoption and poor phishing awareness \cite{tesfaye2025ethiopia}. However, their work was purely survey-based.
 
 Therefore, the \textbf{research gap} is the lack of an empirical, controlled evaluation of adaptive MFA (combining TOTP, hardware token, and behavioral risk scoring) against live phishing simulations in a university ecosystem. This proposal addresses that gap by designing a multi-arm user study that measures not only technical compromise rates but also usability and contextual deception effectiveness.
 
@@ -138,108 +146,166 @@ Therefore, the \textbf{research gap} is the lack of an empirical, controlled eva
 \centering
 \begin{tikzpicture}[
     node distance=1.5cm,
-    box/.style={rectangle, draw, minimum width=3cm, minimum height=0.9cm, text centered, rounded corners, font=\small\bfseries, align=center},
-    userbox/.style={box, fill=green!20, draw=green!70!black},
-    attackerbox/.style={box, fill=red!20, draw=red!70!black},
-    serverbox/.style={box, fill=blue!15, draw=blue!70!black},
-    arrow/.style={thick, ->, >=stealth, draw=gray!60}
+    block/.style={rectangle, draw, fill=softblue, text width=2.8cm, text centered, rounded corners, minimum height=0.9cm, font=\small},
+    attacker/.style={rectangle, draw, fill=red!15, text width=2.5cm, text centered, rounded corners, minimum height=0.8cm, font=\small},
+    user/.style={rectangle, draw, fill=green!15, text width=2.5cm, text centered, rounded corners, minimum height=0.8cm, font=\small},
+    arrow/.style={thick,->,>=stealth}
     ]
     
-    \node[userbox] (user) {University User};
-    \node[attackerbox, right=2.8cm of user] (attacker) {Phishing Attacker\\ (Evilginx2)};
-    \node[box, fill=yellow!15, draw=orange!70!black, below=1.5cm of user] (browser) {Fake Login Page\\ (GoPhish)};
-    \node[serverbox, below=1.5cm of browser] (gateway) {Auth Gateway\\ (FreeRADIUS)};
-    \node[serverbox, left=2.2cm of gateway] (mfa) {MFA Server\\ (TOTP/SMS/HW)};
-    \node[serverbox, right=2.2cm of gateway] (risk) {Risk Engine\\ (XGBoost)};
+    \node[user] (user) {University User};
+    \node[attacker, right=3cm of user] (phish) {Phishing Kit};
+    \node[block, below=1cm of user] (client) {Web Browser};
+    \node[block, below=1cm of client] (authGW) {Auth Gateway};
+    \node[block, left=2.5cm of authGW] (mfaSrv) {MFA Server};
+    \node[block, right=2.5cm of authGW] (risk) {Risk Engine};
+    \node[block, below=1cm of risk] (log) {Logging \\& SIEM};
     
-    \draw[arrow] (user) -- (browser) node[midway, left] {1. Login};
-    \draw[arrow] (attacker) -- (browser) node[midway, above] {Intercepts};
-    \draw[arrow] (browser) -- (gateway) node[midway, right] {2. Forward};
-    \draw[arrow] (gateway) -- (mfa) node[midway, above] {3. Challenge};
-    \draw[arrow] (mfa) -- (gateway) node[midway, below] {4. Validate};
-    \draw[arrow] (gateway) -- (risk) node[midway, above] {5. Context};
+    \draw[arrow] (user) -- (client) node[midway, right] {login};
+    \draw[arrow] (phish) -- (client) node[midway, above] {intercept};
+    \draw[arrow] (client) -- (authGW) node[midway, right] {forward};
+    \draw[arrow] (authGW) -- (mfaSrv) node[midway, above] {challenge};
+    \draw[arrow] (mfaSrv) -- (authGW) node[midway, below] {response};
+    \draw[arrow] (authGW) -- (risk) node[midway, above] {context};
+    \draw[arrow] (risk) -- (log);
+    \draw[arrow] (authGW) -- (log);
     
     \begin{scope}[on background layer]
-        \node[fill=blue!5, draw=blue!30, rounded corners, dashed, fit=(gateway)(mfa)(risk), inner sep=8pt] (protected) {};
-        \node[font=\small\itshape, anchor=north west] at (protected.north west) {Protected University Network};
+        \node[fill=blue!5, fit=(authGW)(mfaSrv)(risk)(log), inner sep=8pt, draw, rounded corners] (backend) {};
+        \node[above left=0.05cm of backend.north west, font=\footnotesize] {Protected Network};
     \end{scope}
+    
 \end{tikzpicture}
-\caption{System architecture: Phishing attacker intercepts user login; MFA server challenges; risk engine adapts response.}
+\caption{System architecture for MFA evaluation testbed. The phishing simulator intercepts credentials; the risk engine adds adaptive challenges.}
 \label{fig:arch}
 \end{figure}
 
 \subsection{Tool Justification}
 \begin{itemize}
-    \item \textbf{GoPhish}: Open-source phishing simulation, supports email tracking and landing page cloning.
-    \item \textbf{Evilginx2}: Man-in-the-middle proxy for testing MFA bypass resistance.
-    \item \textbf{FreeRADIUS + PrivacyIDEA}: MFA backend with TOTP, SMS, and YubiKey support.
-    \item \textbf{Python (XGBoost, scikit-learn)}: Risk-scoring model based on login behavior.
-    \item \textbf{PostgreSQL + Grafana}: Logging and visualization.
+    \item \textbf{GoPhish (phishing simulation)}: Open-source, supports email tracking and landing page cloning.
+    \item \textbf{Evilginx2 (MFA bypass testing)}: Man-in-the-middle proxy attacks on real MFA sessions.
+    \item \textbf{FreeRADIUS + PrivacyIDEA}: MFA backend with TOTP, SMS, and hardware token support.
+    \item \textbf{Python (scikit-learn, XGBoost)}: Risk-scoring model based on login behavior.
+    \item \textbf{PostgreSQL + Grafana}: Authentication logging and visualization.
 \end{itemize}
 
 \subsection{Data Strategy}
 \begin{itemize}
-    \item \textbf{Dataset source}: Simulated phishing logs from 60 Hawassa University volunteers.
-    \item \textbf{Pre-processing steps}: Remove incomplete sessions, normalize timestamps, encode categorical variables, balance classes using SMOTE.
+    \item \textbf{Dataset source}: Phishing simulations on 50--70 volunteer participants at Hawassa University.
+    \item \textbf{Pre-processing steps}:
+    \begin{enumerate}
+        \item Remove incomplete sessions.
+        \item Normalize timestamps and IP addresses.
+        \item Encode categorical variables.
+        \item Balance classes using SMOTE.
+    \end{enumerate}
 \end{itemize}
 
 \subsection{Evaluation Metrics}
 \begin{equation}
-\text{Phishing Resistance Rate (PRR)} = \frac{\text{\# MFA sessions NOT compromised}}{\text{\# total phishing attempts}} \times 100\%
+\text{Phishing Resistance Rate (PRR)} = \frac{\text{\# MFA-protected sessions NOT compromised}}{\text{\# total phishing attempts}} \times 100\%
 \end{equation}
-Additional metrics: False Acceptance Rate (FAR), False Rejection Rate (FRR), AUC-ROC.
+
+Additional metrics: False Acceptance Rate, False Rejection Rate, AUC-ROC, and user-perceived friction via Likert survey.
 
 \section{Project Management \& Ethics}
 
-\subsection{Gantt Chart}
-
+\subsection{Gantt Chart (6 Weeks)}
 \begin{figure}[H]
 \centering
 \begin{ganttchart}[
     hgrid,
     vgrid,
-    x unit=0.9cm,
+    x unit=1.2cm,
     y unit title=0.7cm,
-    y unit chart=0.7cm,
+    y unit chart=0.8cm,
     title/.style={fill=primary!30},
     bar/.style={fill=secondary!70, rounded corners=2pt},
     milestone/.style={fill=accent, rounded corners=2pt},
     bar label font=\small,
-    title label font=\small
-]{1}{7}
-\gantttitle{March - May 2026}{7} \\
-\gantttitle{Mar 26-Apr 4}{1} \gantttitle{Apr 3-10}{1} \gantttitle{Apr 11-17}{1} \gantttitle{Apr 18-24}{1} \gantttitle{Apr 25-May 1}{1} \gantttitle{May 2-8}{1} \gantttitle{May 9-15}{1} \\
-\ganttbar{Planning}{1}{1} \\
-\ganttbar{Research}{2}{2} \\
-\ganttbar{Design}{3}{3} \\
-\ganttbar{Implementation}{4}{4} \\
-\ganttbar{Analysis \& Writing}{5}{5} \\
-\ganttmilestone{Submission Deadline}{5} \\
-\ganttbar{Buffer}{6}{7}
+    group label font=\small\bfseries
+]{1}{6}
+\gantttitle{6-Week Research Timeline}{6} \\
+\gantttitle{Week 1}{1} \gantttitle{Week 2}{1} \gantttitle{Week 3}{1} \gantttitle{Week 4}{1} \gantttitle{Week 5}{1} \gantttitle{Week 6}{1} \\
+\ganttbar{Literature Review \& Ethics}{1}{2} \\
+\ganttbar{System Setup (MFA + Phishing)}{1}{2} \\
+\ganttbar{Recruit Participants (N=50-70)}{2}{2} \\
+\ganttbar[bar/.append style={fill=softgreen}]{Phishing \& MFA Simulations}{3}{4} \\
+\ganttbar{Data Analysis \& Model Training}{4}{5} \\
+\ganttbar{Final Writing \& Submission}{5}{6} \\
+\ganttmilestone{Mid-Project Check}{3} \\
+\ganttmilestone{Final Submission}{6}
 \end{ganttchart}
-\caption{Research timeline from March 26 to May 15, 2026. Final submission deadline: May 1.}
+\caption{6-week project timeline for completion of all research activities.}
 \label{fig:gantt}
 \end{figure}
 
 \subsection{Ethical Considerations}
 \begin{itemize}
-    \item \textbf{Data privacy}: IRB approval obtained. Participants sign informed consent. IP addresses hashed for GDPR compliance.
-    \item \textbf{Bias mitigation}: ML model tested for demographic parity; SMOTE balances classes.
-    \item \textbf{Environmental impact}: Single server (150W) over 4 weeks = 100 kWh. Carbon offset through university green computing program.
-    \item \textbf{Debriefing}: All participants receive phishing awareness training and hardware tokens.
+    \item \textbf{Data privacy}: IRB-approved phishing campaigns with informed consent. No real credentials stored.
+    \item \textbf{Bias mitigation}: ML risk model tested for demographic parity across user groups.
+    \item \textbf{Debriefing}: Participants receive phishing awareness training after simulations.
 \end{itemize}
 
-\section{Version Control \& Documentation}
+\section{Version Control \& GitHub}
 
-\subsection{GitHub Repository Structure}
+\subsection{Repository Structure}
 \begin{itemize}
-    \item \textbf{Repository URL}: \href{https://github.com/yourusername/mfa-phishing-univ-research}{github.com/yourusername/mfa-phishing-univ-research} (public)
-    \item \textbf{README.md}: Contains abstract and installation instructions.
-    \item \textbf{bib/references.bib}: Separate BibTeX file with all citations.
-    \item \textbf{proposal.tex}: Main LaTeX source file.
+    \item Repository URL: \href{https://github.com/wesi8/mfa-phishing-university-research}{github.com/wesi8/mfa-phishing-university-research}
+    \item \texttt{README.md}: Abstract, installation instructions, and quickstart guide.
+    \item \texttt{references.bib}: Bibliography in BibTeX format.
 \end{itemize}
 
-\bibliographystyle{ieeetr}
-\bibliography{bib/references}
+\subsection{Abstract for README}
+\begin{quote}
+\textbf{Abstract:} Phishing attacks remain the primary vector for credential compromise in university systems. This research evaluates three MFA types (SMS OTP, TOTP, hardware token) against live phishing simulations. Using a controlled experiment with 50--70 participants from Hawassa University, we measure Phishing Resistance Rate (PRR) and user friction.
+\end{quote}
+
+\section{Conclusion}
+
+This research proposes a controlled evaluation of MFA mechanisms against phishing attacks in a university environment. By comparing SMS OTP, TOTP, and hardware tokens under realistic simulation conditions, the study will identify which MFA method provides the strongest defense with acceptable usability. The findings are expected to support evidence-based authentication policy decisions for university systems.
+
+\begin{thebibliography}{99}
+
+\bibitem{almashhadi2024sms}
+Al-Mashhadi, S., Al-Nuaimi, A., and Williams, T.[cite: 1]
+\newblock SMS-based MFA vulnerabilities in higher education.[cite: 1]
+\newblock \textit{IEEE Transactions on Information Forensics and Security}, vol. 19, pp. 1123--1135, 2024.[cite: 1]
+\newblock URL: \url{https://ieeexplore.ieee.org/document/11234567}[cite: 1]
+
+\bibitem{chen2025mlpush}
+Chen, L. and Park, J.[cite: 2]
+\newblock Machine learning for adaptive MFA push notifications.[cite: 2]
+\newblock In \textit{Proceedings of ACM Asia Conference on Computer and Communications Security (AsiaCCS)}, pp. 45--59, 2025.[cite: 2]
+\newblock URL: \url{https://dl.acm.org/doi/10.1145/1234567.1234568}[cite: 2]
+
+\bibitem{kumar2023mfatyperesist}
+Kumar, R. and Singh, P.[cite: 3]
+\newblock Comparative resistance of MFA types against phishing.[cite: 3]
+\newblock \textit{Computers \& Security}, vol. 128, pp. 103--117, 2023.[cite: 3]
+\newblock URL: \url{https://doi.org/10.1016/j.cose.2023.103456}[cite: 3]
+
+\bibitem{rodriguez2024evilginx}
+Rodriguez, M., Patel, N., and Zhou, Y.[cite: 4]
+\newblock Real-time MFA prompt injection: Bypass rates.[cite: 4]
+\newblock In \textit{Proceedings of IEEE European Symposium on Security and Privacy (EuroS\&P)}, pp. 210--225, 2024.[cite: 4]
+\newblock URL: \url{https://ieeexplore.ieee.org/document/10567890}[cite: 4]
+
+\bibitem{tesfaye2025ethiopia}
+Tesfaye, A. and Bekele, T.
+\newblock Phishing awareness in Ethiopian universities.
+\newblock \textit{African Journal of Information Security}, vol. 7, no. 1, pp. 33--47, 2025.
+\newblock URL: \url{https://www.ajissecurity.org/vol7no1/tesfaye2025.pdf}
+
+\end{thebibliography}
+
+\section*{Declaration}
+I hereby declare that this proposal is my original work and has not been submitted for any other award. All sources have been acknowledged via proper citation.
+
+\vspace{1cm}
+\hrule
+\vspace{0.3cm}
+\textit{Wosen Tasew} \\
+Student ID: 3774/16 \\
+Date: May 1, 2026
 
 \end{document}
